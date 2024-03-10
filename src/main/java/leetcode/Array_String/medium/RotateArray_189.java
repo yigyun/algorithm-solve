@@ -1,4 +1,4 @@
-package leetcode.Array_String;
+package leetcode.Array_String.medium;
 
 class RotateArray_189 {
     public void rotate(int[] nums, int k) {

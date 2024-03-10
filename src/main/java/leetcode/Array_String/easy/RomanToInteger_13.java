@@ -1,4 +1,4 @@
-package leetcode.Array_String;
+package leetcode.Array_String.easy;
 
 class RomanToInteger_13 {
     public int romanToInt(String s) {

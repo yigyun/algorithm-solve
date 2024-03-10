@@ -1,4 +1,4 @@
-package leetcode.Array_String;
+package leetcode.Array_String.medium;
 
 class JumpGame2_45 {
     public int jump(int[] nums) {

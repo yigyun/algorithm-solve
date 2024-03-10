@@ -1,4 +1,4 @@
-package leetcode.Array_String;
+package leetcode.Array_String.medium;
 
 import java.util.ArrayList;
 import java.util.HashSet;
