@@ -1,4 +1,4 @@
-package leetcode.LinkedList;
+package leetcode.LinkedList.easy;
 
 public class LinkedListCycle_141 {
     static public class Solution {
