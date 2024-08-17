@@ -1,4 +1,4 @@
 package programmers.level2;
 
-public class Problem7 {
+public class Problem15 {
 }
