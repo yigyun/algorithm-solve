@@ -1,27 +1,32 @@
 import java.util.*;
 
 class Solution {
+    
+    static int count;
+    static int n;
+        
     public int solution(int[] numbers, int target) {
         int answer = 0;
-            
-        // 해당 숫자들로 타켓 숫자를 만들어야 함. 그리디하게 할까 아니면 모든 경우를 따질까
-        // 큐에 담기는 거는 0번째는 인덱스, 1번째는 합
-        Queue<int[]> que = new LinkedList<>();
-        que.offer(new int[]{0, numbers[0]});
-        que.offer(new int[]{0, numbers[0] * -1});
-                
-        while(!que.isEmpty()){
-            int[] temp = que.poll();
-            if(temp[0] == numbers.length-1){
-                if(temp[1] == target) answer++;
-                continue;
-            }
-            que.offer(new int[]{temp[0] + 1, temp[1] + (numbers[temp[0] + 1])});
-            que.offer(new int[]{temp[0] + 1, temp[1] + (numbers[temp[0] + 1] * -1)});
+        count = 0;
+        n = target;
+        // target으로 만들기
+        
+        boolean[] visited = new boolean[numbers.length];
+        
+        dfs(numbers, visited, 0, 0, numbers.length, 0);
+        
+        return count;
+    }
+    
+    static void dfs(int[] numbers, boolean[] visited, int index, int depth, int limit, int num){
+        if(depth == limit){
+            if(num == n) count++;
+            return;
         }
         
-        
-        
-        return answer;
+        for(int i = index; i < limit; i++){
+            dfs(numbers, visited, i + 1, depth + 1, limit, num + numbers[i]);
+            dfs(numbers, visited, i + 1, depth + 1, limit, num + (numbers[i] * -1));
+        }
     }
 }
