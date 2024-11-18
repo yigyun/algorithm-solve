@@ -1,34 +1,33 @@
+
+
 class Solution {
-    
-    /**
-        1번은 무조건 1이고, times[0]은 어차피 실행됨
-    **/
-    
     public int solution(int[] diffs, int[] times, long limit) {
         int answer = 1;
         
-        int left = 1;
-        int right = 100000;
-                
-        while(left <= right){
-            int mid = (left + right) / 2;
-            long time = times[0];
-            for(int i = 1; i < diffs.length; i++){
-                if(diffs[i] <= mid){
-                    time += times[i];
-                }else{
-                    int diff = diffs[i] - mid;
-                    time += (diff * (times[i-1] + times[i])) + times[i]; 
-                }
-            }
-            if(time <= limit){
-                right = mid - 1;
-                answer = mid;
-            }else{
-                left = mid + 1;
-            }
+        int start = 1;
+        int end = 0;
+        for(int i = 0; i < diffs.length; i++){
+            end = Math.max(diffs[i], end);
         }
         
-        return answer;
+        while(start <= end){
+            int mid = (start + end) / 2;
+            long time = 0;
+            for(int i = 0; i < diffs.length; i++){
+                if(mid >= diffs[i]){
+                    time += times[i];
+                }else{
+                    time += ((times[i - 1] + times[i]) * (diffs[i] - mid)) + times[i];
+                }
+                if(time > limit) break;
+            }
+            
+            if(time <= limit){
+                end = mid - 1;
+            }else{
+                start = mid + 1;
+            }
+        }
+        return start;
     }
 }
