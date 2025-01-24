@@ -1,36 +1,40 @@
 import java.util.*;
 
 class Solution {
-    public int[] solution(int[] progresses, int[] speeds) {
-        int day = -1;
-        List<Integer> list = new ArrayList<>();
-        Queue<Integer> que = new LinkedList<>();
-        
-        for(int i = 0; i < progresses.length; i++){
-            int num = 100 - progresses[i];
-            int num2 = num / speeds[i];
-            if(num % speeds[i] > 0) num2++;
-            que.offer(num2);
+    
+    static class Task{
+        int p;
+        int s;
+        Task(int p, int s){
+            this.p = p;
+            this.s = s;
         }
+    }
+    
+    public int[] solution(int[] progresses, int[] speeds) {
+        List<Integer> list = new ArrayList<>();
         
-        day = que.poll();
-        int count = 1;
+        Queue<Task> que = new LinkedList<>();
+        int n = progresses.length;
+        
+        for(int i = 0; i < n; i++){
+            que.offer(new Task(progresses[i], speeds[i]));
+        }
         
         while(!que.isEmpty()){
-            if(que.peek() <= day){
-                que.poll();
+            Task cur = que.poll();
+            int t = (100 - cur.p) / cur.s;
+            t = (100 - cur.p) % cur.s != 0 ? t + 1 : t;
+            int count = 1;
+            
+            while(!que.isEmpty() && 100 <= que.peek().p + (que.peek().s * t)){
                 count++;
-            }else{
-                list.add(count);
-                count = 1;
-                day = que.poll();
+                que.poll();
             }
+            list.add(count);
         }
-        
-        list.add(count);
-        
+
         int[] answer = new int[list.size()];
-        
         for(int i = 0; i < list.size(); i++){
             answer[i] = list.get(i);
         }
