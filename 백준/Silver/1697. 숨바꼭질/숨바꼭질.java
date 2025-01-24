@@ -1,50 +1,38 @@
 import java.util.*;
 import java.io.*;
 
-public class Main{
+class Main{
+    public static void main(String[] args) throws Exception{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int[] nums = new int[200000];
+        StringTokenizer st = new StringTokenizer(br.readLine());
 
-    static boolean[] visited;
+        int n = Integer.parseInt(st.nextToken());
+        int x = Integer.parseInt(st.nextToken());
 
-    public static void main(String[] args)throws IOException{
-        Scanner sc = new Scanner(System.in);
-        int N = sc.nextInt();
-        int K = sc.nextInt();
-        if(N == K){
-            System.out.print(0);
-            return;
-        }
         Queue<Integer> que = new LinkedList<>();
-        visited = new boolean[100001];
-        visited[N] = true;
-        que.offer(N);
-        int time = 0;
-        while(!que.isEmpty()){
-            int size = que.size();
-            boolean check = false;
-            for(int i = 0; i < size; i++){
-                int number = que.poll();
-                if(number == K) {check = true; break;}
-                if(isRange(number - 1)){
-                    visited[number - 1] = true;
-                    que.offer(number - 1);
-                }
-                if(isRange(number + 1)){
-                    visited[number+1] = true;
-                    que.offer(number + 1);
-                }
-                if(isRange(number*2)){
-                    visited[number*2] = true;
-                    que.offer(number*2);
-                }
-            }
-            if(check) break;
-            time++;
-        }
-        System.out.print(time);
-    }
+        que.offer(n);
 
-    static boolean isRange(int x){
-        if(x >= 0 && x <= 100000 && !visited[x]) return true;
-        return false;
+        while(!que.isEmpty()){
+            int cur = que.poll();
+
+            if(cur == x){
+                System.out.print(nums[cur]);
+                return;
+            }
+
+            if(cur + 1 < 200000 && nums[cur + 1] == 0){
+                nums[cur+1] = nums[cur] + 1;
+                que.offer(cur + 1);
+            }
+            if(cur - 1 >= 0 && nums[cur - 1] == 0){
+                nums[cur - 1] = nums[cur] + 1;
+                que.offer(cur - 1);
+            }
+            if(cur * 2 < 200000 && nums[cur * 2] == 0){
+                nums[cur * 2] = nums[cur] + 1;
+                que.offer(cur * 2);
+            }
+        }
     }
 }
