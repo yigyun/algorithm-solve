@@ -1,38 +1,46 @@
 import java.util.*;
 
 class Solution {
+    
+    static class Truck{
+        int w;
+        int t;
+        int i;
+        Truck(int w, int t, int i){
+            this.w = w;
+            this.t = t;
+            this.i = i;
+        }
+    }
+    
     public int solution(int bridge_length, int weight, int[] truck_weights) {
+        int answer = 0;
         
-        Queue<int[]> bridge = new LinkedList<>();
+        int bw = 0;
+        int index = 0;
+        int n = truck_weights.length;
+        int d = 0;
+        Queue<Truck> que = new LinkedList<>();
         
-        int tindex = 0;
-        int tweight = truck_weights[tindex];
-        int turn = 1;
-        bridge.offer(new int[]{truck_weights[tindex++], 1 + bridge_length});
-        turn++;
-        
-        while(tindex < truck_weights.length){
+        while(index < n){
+            d++;
             
-            if(!bridge.isEmpty() && bridge.peek()[1] <= turn){ 
-                int[] node = bridge.poll();
-                tweight -= node[0];
+            while(!que.isEmpty() && d - que.peek().t >= bridge_length){
+                Truck tr = que.poll();
+                bw -= tr.w;
             }
             
-            if(bridge.size() < bridge_length && tweight + truck_weights[tindex] <= weight){
-                bridge.add(new int[]{truck_weights[tindex], turn + bridge_length});
-                tweight += truck_weights[tindex];
-                tindex++;
+            if(bw + truck_weights[index] <= weight && que.size() + 1 <= bridge_length){
+                que.offer(new Truck(truck_weights[index], d, index));
+                bw += truck_weights[index];
+                index++;
             }
-            
-            turn++;
         }
         
-        while(!bridge.isEmpty()){
-            int[] node = bridge.poll();
-            turn = node[1];
+        while(!que.isEmpty()){
+            d = que.poll().t + bridge_length;
         }
         
-        
-        return turn;
+        return d;
     }
 }
