@@ -1,88 +1,90 @@
-
 import java.util.*;
 import java.io.*;
 
-public class Main
-{
+class Main{
 
-    static final int[] dx = new int[]{-1, 1, 0, 0};
-    static final int[] dy = new int[]{0, 0, -1, 1};
+    static int[] dx = {-1, 1, 0, 0}, dy = {0, 0, -1, 1};
+    static int n, m;
+    static int[][] fboard;
+    static char[][] board;
+    static int[][] jboard;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
-        int R = Integer.parseInt(st.nextToken());
-        int C = Integer.parseInt(st.nextToken());
-        int time = Integer.MAX_VALUE;
 
-        int[][] jihun = new int[R][C];
-        int[][] fire = new int[R][C];
+        n = Integer.parseInt(st.nextToken());
+        m = Integer.parseInt(st.nextToken());
+        int result = Integer.MAX_VALUE;
 
+        fboard = new int[n][m];
+        board = new char[n][m];
+        jboard = new int[n][m];
         Queue<int[]> fque = new LinkedList<>();
         Queue<int[]> jque = new LinkedList<>();
-        boolean[][] visited = new boolean[R][C];
 
-        for(int i = 0; i < R; i++){
-            char[] carray = br.readLine().toCharArray();
-            for(int j = 0; j < C; j++){
-                if(carray[j] == '#'){
-                    jihun[i][j] = -1; fire[i][j] = -1;
-                }else if(carray[j] == 'J'){
-                    jihun[i][j] = 1;
-                    jque.offer(new int[]{i,j});
-                    visited[i][j] = true;
-                }else if(carray[j] == 'F'){
-                    fire[i][j] = 1;
+        for(int i = 0; i < n; i++){
+            Arrays.fill(fboard[i], -1);
+            Arrays.fill(jboard[i], -1);
+        }
+
+        for(int i = 0; i < n; i++){
+            String str = br.readLine();
+            for(int j = 0; j < m; j++){
+                board[i][j] = str.charAt(j);
+                if(board[i][j] == 'J'){
+                    jque.offer(new int[]{i, j});
+                    jboard[i][j] = 0;
+                }else if(board[i][j] == 'F'){
                     fque.offer(new int[]{i, j});
+                    fboard[i][j] = 0;
                 }
             }
         }
 
-        while(!jque.isEmpty()){
-            int[] temp = jque.poll();
-            int number = jihun[temp[0]][temp[1]];
+        // 불의 시간을 표현한다.
+        while(!fque.isEmpty()){
+            int[] cur = fque.poll();
+            int x = cur[0], y = cur[1];
+
             for(int dir = 0; dir < 4; dir++){
-                int nx = temp[0] + dx[dir];
-                int ny = temp[1] + dy[dir];
-                if (nx >= 0 && nx < R && ny >= 0 && ny < C && !visited[nx][ny] && jihun[nx][ny] == 0) {
-                    jque.offer(new int[]{nx,ny});
-                    jihun[nx][ny] = number+1;
-                    visited[nx][ny] = true;
+                int nx = x+ dx[dir];
+                int ny = y + dy[dir];
+
+                if(isRange(nx, ny) && fboard[nx][ny] < 0 && board[nx][ny] != '#'){
+                    fboard[nx][ny] = fboard[x][y] + 1;
+                    fque.offer(new int[]{nx, ny});
                 }
             }
         }
 
-        visited = new boolean[R][C];
-        while (!fque.isEmpty()) {
-            int size = fque.size();
-            for(int i = 0; i < size; i++) {
-                int[] temp = fque.poll();
-                int number = fire[temp[0]][temp[1]];
-                for (int dir = 0; dir < 4; dir++) {
-                    int nx = temp[0] + dx[dir];
-                    int ny = temp[1] + dy[dir];
-                    if (nx >= 0 && nx < R && ny >= 0 && ny < C && !visited[nx][ny] && fire[nx][ny] == 0) {
-                        fque.offer(new int[]{nx, ny});
-                        fire[nx][ny] = number + 1;
-                        visited[nx][ny] = true;
-                    }
+        // 지훈이가 움직인다
+        while(!jque.isEmpty()){
+            int[] cur = jque.poll();
+            int x = cur[0], y = cur[1];
+            for(int dir = 0; dir < 4; dir++){
+                int nx = x + dx[dir];
+                int ny = y + dy[dir];
+
+                if(!isRange(nx, ny)){
+                    System.out.print(jboard[x][y] + 1);
+                    return;
+                }
+
+
+                if(isRange(nx, ny) && jboard[nx][ny] < 0 && board[nx][ny] != '#'){
+                    if(fboard[nx][ny] != -1 && fboard[nx][ny] <= jboard[x][y] + 1) continue;
+                    jboard[nx][ny] = jboard[x][y] + 1;
+                    jque.offer(new int[]{nx, ny});
                 }
             }
         }
 
-        for (int i = 0; i < R; i++) {
-            for (int j = 0; j < C; j++) {
-                if (i == 0 || i == R - 1 || j == 0 || j == C - 1) {
-                    if (jihun[i][j] > 0) {
-                        if (jihun[i][j] < fire[i][j] || fire[i][j] == 0) {
-                            time = Math.min(time, jihun[i][j]);
-                        }
-                    }
-                }
-            }
-        }
 
-        if(time == Integer.MAX_VALUE) System.out.print("IMPOSSIBLE");
-        else System.out.print(time);
+        System.out.print("IMPOSSIBLE");
+    }
+
+    static boolean isRange(int nx, int ny){
+        return !(nx < 0 || nx >= n || ny < 0 || ny >= m);
     }
 }
