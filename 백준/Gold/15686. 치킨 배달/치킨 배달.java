@@ -1,93 +1,92 @@
 import java.util.*;
 import java.io.*;
 
-/**
- N x N
- r,c 시작이 1,1
- 치킨 거리는 집과 가장 가까운 치킨집 사이의 거리
- 두 점 사이의 거리는 맨해튼 거리
- 도시의 치킨 거리 = 모든 집의 치킨 거리 합
-
- 필요한 거
-
- **/
+/*
+    빈칸, 집, 치킨집
+    N x N
+    1,1에서 시작함.
+    치킨 거리는 집과 가장 가까운 치킨집 사이의 거리
+    도시 거리는 모든 집의 치킨 거리 합
+    거리 공식: 절댓값
+*/
 
 class Main{
 
-    static int N;
-    static int M;
-
+    static int n;
+    static int m;
     static int[][] map;
+    static List<int[]> home;
+    static List<int[]> chs;
+    static List<Integer>[] homeTochs;
 
-    static List<int[]> chickens;
-    static List<int[]> homes;
-    static int result;
+    static int min;
 
-    static int[] dx = new int[]{-1, 0, 1, 0};
-    static int[] dy = new int[]{0, -1, 0, 1};
-
-    public static void main(String[] args) throws IOException{
-        BufferedReader br= new BufferedReader(new InputStreamReader(System.in));
+    public static void main(String[] args) throws Exception{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
+        n = Integer.parseInt(st.nextToken());
+        m = Integer.parseInt(st.nextToken());
+        int cc = 0;
+        map = new int[n][n];
+        min = Integer.MAX_VALUE;
+        home = new ArrayList<>();
+        chs = new ArrayList<>();
 
-        N = Integer.parseInt(st.nextToken());
-        M = Integer.parseInt(st.nextToken());
-        map = new int[N][N];
-        chickens = new ArrayList<>();
-        homes = new ArrayList<>();
-        result = Integer.MAX_VALUE;
-
-        for(int i = 0; i < N; i++){
+        for(int i = 0; i < n; i++){
             st = new StringTokenizer(br.readLine());
-            for(int j = 0; j < N; j++){
+            for(int j = 0; j < n; j++){
                 map[i][j] = Integer.parseInt(st.nextToken());
-                if(map[i][j] == 2) chickens.add(new int[]{i, j});
-                else if(map[i][j] == 1) homes.add(new int[]{i, j});
+                if(map[i][j] == 1){
+                    cc++;
+                    home.add(new int[]{i, j});
+                }else if(map[i][j] == 2){
+                    chs.add(new int[]{i, j});
+                }
             }
         }
 
-        // cheickens에서 m개를 선택하는거임.
-        dfs(0, 0,  new ArrayList<int[]>());
-        
-        System.out.print(result);
-    }
-
-    static void findDistance(List<int[]> list){
-        
-        int distance = 0;
-        
-        for(int[] home : homes){
-            int x = home[0];
-            int y = home[1];
-            int min = 2501;
-            for(int[] node : list){
-                min = Math.min(min, distance(x, y, node[0], node[1]));
-            }
-            distance += min;
+        // 거리계산하기
+        homeTochs = new List[cc];
+        for(int i = 0; i < cc; i++){
+            homeTochs[i] = new ArrayList<>();
         }
-        
-        result = Math.min(distance, result);
+
+        for(int i = 0; i < home.size(); i++){
+            int[] curHome = home.get(i);
+            for(int j = 0; j < chs.size(); j++){
+                int[] curChs = chs.get(j);
+                int dis = Math.abs(curHome[0] - curChs[0]) + Math.abs(curHome[1] - curChs[1]);
+                homeTochs[i].add(dis);
+            }
+        }
+
+        find(0, 0, new boolean[chs.size()]);
+
+        System.out.print(min);
     }
 
-    static void dfs(int index, int depth, List<int[]> list){
-        if(depth == M){
-            // 거리 찾기
-            findDistance(list);
+    static void find(int index, int count, boolean[] store){
+        if(count == m){
+            // 여기가 치킨집 선택한거임
+            int sum = 0;
+            for(List<Integer> list : homeTochs){
+                int mis = Integer.MAX_VALUE;
+                for(int i = 0; i < list.size(); i++){
+                    if(store[i]){
+                        mis = Math.min(mis,list.get(i));
+                    }
+                }
+                sum += mis;
+            }
+            min = Math.min(min, sum);
             return;
         }
 
-        for(int i = index; i < chickens.size(); i++){
-            list.add(chickens.get(i));
-            dfs(i + 1, depth + 1, list);
-            list.remove(list.size() - 1);
+        for(int i = index; i < store.length; i++){
+            if(store[i]) continue;
+            store[i] = true;
+            find(i + 1, count + 1, store);
+            store[i] = false;
         }
-    }
-
-    static boolean isRange(int nx, int ny){
-        return !(nx < 0 || ny < 0 || nx >= N || ny >= N);
-    }
-
-    static int distance(int x1, int y1, int x2, int y2){
-        return Math.abs(x1 - x2) + Math.abs(y1 - y2);
     }
 }
