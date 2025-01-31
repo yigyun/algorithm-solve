@@ -2,54 +2,40 @@ import java.util.*;
 import java.io.*;
 
 class Main{
-    public static void main(String[] args) throws IOException{
-        Scanner sc = new Scanner(System.in);
-        int x = sc.nextInt();
-        int count = 0;
-
+    public static void main(String[] args) throws Exception{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int n = Integer.parseInt(br.readLine());
         StringBuilder sb = new StringBuilder();
-        int[] dp = new int[x + 1];
-        dp[x] = 1;
-        for(int i = x; i > 0; i--){
-            if(dp[i] == 0) continue;
 
-            if(i % 3  == 0) {
-                if(dp[i/3] == 0) dp[i/3] = dp[i] + 1;
-                else dp[i / 3] = Math.min(dp[i/3], dp[i] + 1);
+        int[] nums = new int[n+1];
+        Arrays.fill(nums, Integer.MAX_VALUE);
+        int[] dp = new int[n+1];
+
+        nums[1] = 0;
+        for(int i = 1; i <= n; i++){
+            if(nums[i] == Integer.MAX_VALUE) continue;
+            if(i * 3 <= n && nums[i*3] > nums[i] + 1){
+                nums[i*3] = nums[i] + 1;
+                dp[i*3] = i;
             }
-            if(i % 2 == 0) {
-                if(dp[i/2] == 0) dp[i/2] = dp[i] + 1;
-                else dp[i/2] = Math.min(dp[i/2], dp[i] + 1);
+            if(i * 2 <= n && nums[i*2] > nums[i] + 1){
+                nums[i*2] = nums[i] + 1;
+                dp[i*2] = i;
             }
-            if(dp[i-1] == 0){
-                dp[i-1] = dp[i] + 1;
-            } else dp[i-1] = Math.min(dp[i-1], dp[i] + 1);
+            if(i + 1 <= n && nums[i+1] > nums[i] + 1){
+                nums[i+1] = nums[i] + 1;
+                dp[i+1] = i;
+            }
         }
 
-        int c = dp[1] - 1;
-        int i = 1;
-        List<Integer> list = new ArrayList<>();
-        list.add(1);
-
-        while(i != x){
-            if(i * 3 <= x && dp[i * 3] == c ){
-                i *= 3;
-            } else if (i* 2 <= x && dp[i*2] == c) {
-                i *= 2;
-            }else{
-                i++;
-            }
-            list.add(i);
-            c--;
-        }
-        sb.append(dp[1] - 1).append("\n");
-
-        Collections.reverse(list);
-        for(int num : list){
-            sb.append(num).append(" ");
+        sb.append(nums[n]).append('\n');
+        int idx = n;
+        sb.append(n).append(' ');
+        while(idx != 1){
+            sb.append(dp[idx]).append(' ');
+            idx = dp[idx];
         }
 
-
-        System.out.print(sb.toString());
+        System.out.println(sb);
     }
 }
