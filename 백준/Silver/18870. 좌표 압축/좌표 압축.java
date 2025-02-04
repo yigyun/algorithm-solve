@@ -1,32 +1,42 @@
-import java.io.*;
 import java.util.*;
+import java.io.*;
 
-public class Main{
-    public static void main(String[] args)throws IOException {
+class Main{
+    public static void main(String[] args) throws Exception{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-        StringBuilder sb = new StringBuilder();
-        int N = Integer.parseInt(br.readLine());
+        int n = Integer.parseInt(br.readLine());
         StringTokenizer st = new StringTokenizer(br.readLine());
-        int[] arr = new int[N];  // 입력받을 배열
-        HashMap<Integer, Integer> hm = new HashMap<Integer,Integer>();
-        for(int i = 0; i < N ; i++)
-        {
-            arr[i] = Integer.parseInt(st.nextToken());
+        StringBuilder sb = new StringBuilder();
+        
+        int[] ori = new int[n];
+        int[] nums = new int[n];
+
+        for(int i = 0; i < n; i++){
+            int num = Integer.parseInt(st.nextToken());
+            ori[i] = num;
+            nums[i] = num;
         }
-        int[] sort = Arrays.copyOf(arr, arr.length); // 정렬할 배열
-        Arrays.sort(sort);
-        int rankNum = 0;
-        for(int i : sort) {
-            if (!hm.containsKey(i)){
-                hm.put(i, rankNum++);
+
+        Arrays.sort(nums);
+
+        List<Integer> list = new ArrayList<>();
+
+        for(int i = 0; i < n; i++){
+            if(i == 0 || nums[i-1] != nums[i]) list.add(nums[i]);
+        }
+
+        for(int target : ori){
+            int sta = 0;
+            int end = list.size();
+            while(sta < end){
+                int mid = (sta + end) / 2;
+                if(list.get(mid) < target) sta = mid + 1;
+                else end = mid;
             }
+
+            sb.append(sta).append(' ');
         }
-        for(int i : arr)
-        {
-            int num = hm.get(i);
-            sb.append(num).append(' ');
-        }
-        System.out.print(sb);
+        
+        System.out.print(sb.toString());
     }
 }
