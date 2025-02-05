@@ -2,35 +2,34 @@ import java.util.*;
 import java.io.*;
 
 class Main{
-    public static void main(String[] args) throws IOException{
-        Scanner sc = new Scanner(System.in);
-        int N = sc.nextInt();
-        int M = sc.nextInt();
-        int[] nums = new int[N];
+    public static void main(String[] args) throws Exception{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int n = Integer.parseInt(st.nextToken());
+        int m = Integer.parseInt(st.nextToken());
 
-        for(int i = 0; i < N; i ++){
-            nums[i] = sc.nextInt();
+        int[] nums = new int[n];
+        for(int i = 0; i < n; i++){
+            nums[i] = Integer.parseInt(br.readLine());
         }
+
         Arrays.sort(nums);
 
-        int start = 0;
-        int end = 1;
-        int gap = Integer.MAX_VALUE;
+        int result = Integer.MAX_VALUE;
 
-        while(end < N){
-            int num = nums[end] - nums[start];
-            if(num >= M){
-                gap = Math.min(gap, num);
-                start++;
+        int sta = 0;
+        int en = 0;
+
+        while(sta < n-1 && en < n && sta <= en){
+            int num = nums[en] - nums[sta];
+            if(num >= m){
+                result = Math.min(result, num);
+                sta++;
             }else{
-                end++;
-            }
-            
-            if(start == end){
-                end++;
+                en++;
             }
         }
 
-        System.out.print(gap);
+        System.out.print(result);
     }
 }
