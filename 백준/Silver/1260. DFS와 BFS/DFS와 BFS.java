@@ -7,6 +7,7 @@ class Main{
     static int m;
     static int v;
     static List<Integer>[] graph;
+    static StringBuilder sb2;
 
     public static void main(String[] args) throws Exception{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -14,6 +15,7 @@ class Main{
         n = Integer.parseInt(st.nextToken());
         m = Integer.parseInt(st.nextToken());
         v = Integer.parseInt(st.nextToken());
+        sb2 = new StringBuilder();
 
         graph = new ArrayList[n+1];
         for(int i = 1; i <= n; i++){
@@ -28,8 +30,25 @@ class Main{
             graph[v].add(u);
         }
 
-        dfs();
+        dfs2(v, new boolean[n + 1]);
+        sb2.append('\n');
+        System.out.print(sb2);
         bfs();
+    }
+
+    static void dfs2(int idx, boolean[] visited){
+        if(visited[idx]) return;
+
+        visited[idx] = true;
+        sb2.append(idx).append(" ");
+
+        Collections.sort(graph[idx]);
+
+        for(int next : graph[idx]){
+            if(!visited[next]){
+                dfs2(next, visited);
+            }
+        }
     }
 
     static void dfs(){
